@@ -1978,12 +1978,13 @@ void CardsActivity::askCloseFirst(std::uint64_t open, const std::string& title, 
             if (o.id == open) name = o.name;
     openMenu(trf("Close {game}?", {name}), {
         action(trf("Close it and start {game}", {title}), [this, next, name]() {
+            m_audio.play("close_confirm");
             m_pendingLaunch = next;
             m_launcher.terminateApplication();
             say(trf("Closing {game}...", {name}));
         }, true),
         action("Cancel", [] {}),
-    });
+    }, "close_prompt");
 }
 
 // The daemon closes homebrew on HOME only while this file is there (Settings >
@@ -2478,6 +2479,7 @@ void CardsActivity::pumpDaemon() {
                 break;
             }
             case M::ApplicationSuspended:
+                if (!m_asleep) m_audio.play("home_return");
                 m_launcher.setAppRunning(true);
                 m_launcher.setAppHasForeground(false);
                 m_launcher.setSuspendedTitleId(n.app_id);
@@ -2594,11 +2596,12 @@ void CardsActivity::askClose() {
             if (g.id == open) name = g.name;
     openMenu(trf("Close {game}?", {name}), {
         action("Close it", [this, name]() {
+            m_audio.play("close_confirm");
             m_launcher.terminateApplication();
             say(trf("Closing {game}...", {name}));
         }, true),
         action("Cancel", [] {}),
-    });
+    }, "close_prompt");
 #endif
 }
 
@@ -3179,12 +3182,12 @@ void CardsActivity::handleHome() {
 
 // ---------------------------------------------------------------- popups
 
-void CardsActivity::openMenu(std::string title, std::vector<MenuItem> items) {
+void CardsActivity::openMenu(std::string title, std::vector<MenuItem> items, const char* sound) {
     m_menuTitle = std::move(title);
     m_menu = std::move(items);
     m_menuSel = 0;
     m_menuIn = m_settings.motion ? 0.f : 1.f;
-    m_audio.play("show_modal");
+    m_audio.play(sound);
 }
 
 // Plus (and the panel's "..."): what can be done with the chosen card.
@@ -7348,6 +7351,7 @@ void CardsActivity::onUpdate(float dt) {
             m_settings.achSeenAt = got.newest;
             m_settings.save();
         }
+        if (!got.said.empty()) m_audio.play("achievement");
         if (got.said.size() == 1) say(trf("Achievement unlocked: {what}", {got.said[0]}));
         else if (got.said.size() > 1)
             say(trf("{count} achievements unlocked: + on a game shows them", {std::to_string(got.said.size())}));

@@ -255,7 +255,8 @@ bool Audio::start() {
             l.lengths.push_back(mp3Seconds(t));
         }
         for (const char* name : {"navigation", "activation", "confirm", "launch_game", "show_modal", "hide_modal",
-                                 "tab_transition", "toggle_on", "toggle_off", "key", "key_move", "key_backspace"})
+                                 "tab_transition", "toggle_on", "toggle_off", "key", "key_move", "key_backspace",
+                                 "close_prompt", "close_confirm", "achievement", "home_return"})
             l.sounds.emplace_back(name, readAll(std::string(kSounds) + "/sfx/" + name + ".wav"));
         return l;
     });

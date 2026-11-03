@@ -264,7 +264,7 @@ private:
     bool closeEverything();
 
     // Popups and screens.
-    void openMenu(std::string title, std::vector<MenuItem> items);
+    void openMenu(std::string title, std::vector<MenuItem> items, const char* sound = "show_modal");
     void openOptions();
     // The Music screen (the note in the bar, Music on the dots): a record that
     // turns, the song and its controls, the playlist, and the music's bars.

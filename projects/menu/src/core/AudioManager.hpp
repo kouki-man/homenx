@@ -6,6 +6,7 @@
 #include <mutex>
 #include <atomic>
 #include <cstdint>
+#include <initializer_list>
 
 enum class Sfx {
     Navigate,
@@ -20,6 +21,11 @@ enum class Sfx {
     SliderDown,
     ConfirmPositive,
     Volume,
+    // On-screen keyboard. Optional: when a sound pack has no file for one of
+    // these, the keyboard falls back to Activate / Navigate (see playFirstSfx).
+    KeyPress,      // sfx/keyboard_key.wav
+    KeyBackspace,  // sfx/keyboard_backspace.wav
+    KeyCursor,     // sfx/keyboard_cursor.wav
 };
 
 enum class MusicRepeatMode {
@@ -105,6 +111,9 @@ public:
     void loadSfx(Sfx id, const std::string& path);
     void clearSfx();
     void playSfx(Sfx id);
+    bool hasSfx(Sfx id);
+    // Plays the first sound in the list that is actually loaded.
+    void playFirstSfx(std::initializer_list<Sfx> ids);
     void loadNamedSfx(const std::string& id, const std::string& path, float volumeScale = 1.f);
     void playNamedSfx(const std::string& id);
     void setSfxVolume(float vol);

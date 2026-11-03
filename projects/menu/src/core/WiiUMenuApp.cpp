@@ -2756,8 +2756,17 @@ void WiiUMenuApp::createTextEntry() {
     m_textEntry->setFont(&m_fontNormal);
     m_textEntry->setSmallFont(&m_fontSmall);
     m_textEntry->setTheme(&m_theme);
-    m_textEntry->onKeySfx([this]() { m_audio.playSfx(Sfx::Activate); });
-    m_textEntry->onNavigateSfx([this]() { m_audio.playSfx(Sfx::Navigate); });
+    // Keyboard has its own three sounds; each falls back to the old shared
+    // sound when the sound pack doesn't provide a file for it.
+    m_textEntry->onKeySfx([this]() {
+        m_audio.playFirstSfx({Sfx::KeyPress, Sfx::Activate});
+    });
+    m_textEntry->onBackspaceSfx([this]() {
+        m_audio.playFirstSfx({Sfx::KeyBackspace, Sfx::KeyPress, Sfx::Activate});
+    });
+    m_textEntry->onNavigateSfx([this]() {
+        m_audio.playFirstSfx({Sfx::KeyCursor, Sfx::Navigate});
+    });
     m_textEntry->onCloseSfx([this]() { m_audio.playSfx(Sfx::ModalHide); });
     m_textEntry->onAccessibilityAnnouncement([this](const std::string& text) {
         m_accessibility.announce(text);
@@ -5435,6 +5444,17 @@ void WiiUMenuApp::loadSoundPreset(const std::string& preset) {
     m_audio.loadSfx(Sfx::SliderDown,      sfxPath("sfx/slider_down.wav"));
     m_audio.loadSfx(Sfx::ConfirmPositive, sfxPath("sfx/confirm.wav"));
     m_audio.loadSfx(Sfx::Volume,          sfxPath("sfx/volume.wav"));
+
+    // On-screen keyboard sounds (optional files: skipped quietly when absent,
+    // and the keyboard then falls back to activation / navigation).
+    auto loadOptionalSfx = [&](Sfx id, const char* relativePath) {
+        const std::string path = sfxPath(relativePath);
+        if (pathExists(path))
+            m_audio.loadSfx(id, path);
+    };
+    loadOptionalSfx(Sfx::KeyPress,     "sfx/keyboard_key.wav");
+    loadOptionalSfx(Sfx::KeyBackspace, "sfx/keyboard_backspace.wav");
+    loadOptionalSfx(Sfx::KeyCursor,    "sfx/keyboard_cursor.wav");
 
     std::string musicDir = musicBase + "/music";
     std::error_code ec;

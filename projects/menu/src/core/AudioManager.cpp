@@ -856,6 +856,22 @@ void AudioManager::playSfx(Sfx id) {
     }
 }
 
+bool AudioManager::hasSfx(Sfx id) {
+    std::lock_guard<std::mutex> lk(m_sfxMutex);
+    return m_sfx.find(static_cast<int>(id)) != m_sfx.end();
+}
+
+void AudioManager::playFirstSfx(std::initializer_list<Sfx> ids) {
+    std::lock_guard<std::mutex> lk(m_sfxMutex);
+    for (Sfx id : ids) {
+        auto it = m_sfx.find(static_cast<int>(id));
+        if (it != m_sfx.end()) {
+            Mix_PlayChannel(-1, it->second, 0);
+            return;
+        }
+    }
+}
+
 void AudioManager::loadNamedSfx(const std::string& id, const std::string& path, float volumeScale) {
     Mix_Chunk* chunk = Mix_LoadWAV(path.c_str());
     if (!chunk) {

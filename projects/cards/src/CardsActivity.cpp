@@ -1857,7 +1857,7 @@ void CardsActivity::leave(int index, float seconds, std::function<void()> then) 
 #ifdef SWITCHU_MENU
     m_newsOpen = false;
 #endif
-    m_audio.play(m_leaveIndex >= 0 ? "launch_game" : "activation"); // Settings' Nintendo screens aren't a game
+    m_audio.play(m_leaveIndex >= 0 ? "launch_game" : "confirm"); // Settings' Nintendo screens aren't a game
     m_audio.fadeOut(static_cast<int>(seconds * 1000.f));
 }
 
@@ -2082,7 +2082,7 @@ void CardsActivity::ensureTextEntry() {
         m_textEntry->setFont(&m_hxFont);
         m_textEntry->setSmallFont(&m_hxSmall);
         m_textEntry->setTheme(&m_theme);
-        m_textEntry->onKeySfx([this]() { m_audio.play("activation"); });
+        m_textEntry->onKeySfx([this]() { m_audio.play("confirm"); });
         m_textEntry->onNavigateSfx([this]() { m_audio.play("navigation"); });
         m_textEntry->onCloseSfx([this]() { m_audio.play("hide_modal"); });
     } else {
@@ -2135,7 +2135,7 @@ void CardsActivity::openSocial(bool miis) {
         };
         cb.onMiiEditor = [this]() { if (m_social) m_social->showMiisPage(); };
         cb.onNavigate = [this]() { m_audio.play("navigation"); };
-        cb.onActivate = [this]() { m_audio.play("activation"); };
+        cb.onActivate = [this]() { m_audio.play("confirm"); };
         m_social->setCallbacks(std::move(cb));
         rootBox().addChild(m_social);
     }
@@ -2196,7 +2196,7 @@ void CardsActivity::openDiscord() {
         };
         cb.onUserTokenLogin = [this]() { m_discordTokenEntryPending = true; }; // (after the panel's input returns)
         cb.onNavigate = [this]() { m_audio.play("navigation"); };
-        cb.onActivate = [this]() { m_audio.play("activation"); };
+        cb.onActivate = [this]() { m_audio.play("confirm"); };
         m_discordPanel->setCallbacks(std::move(cb));
         rootBox().addChild(m_discordPanel);
     }
@@ -2261,7 +2261,7 @@ void CardsActivity::openNintendo(const Game& g) {
         // as OperationFailed (pumpDaemon), which brings the screen back.
     });
 #else
-    m_audio.play("activation");
+    m_audio.play("confirm");
     m_audio.pause();
     std::string error;
     const bool ok = openSystem(a, m_user, error);
@@ -2967,7 +2967,7 @@ bool CardsActivity::updateLock(float dt) {
             m_audio.play("navigation");
         } else if (in.isDown(B::A) && m_pwSetup) {
             res = m_pw.confirm();
-            if (res == E::None) m_audio.play("activation");
+            if (res == E::None) m_audio.play("confirm");
         } else if (in.isDown(B::B)) {
             if (m_pwSetup && m_pw.presses.empty()) { // with nothing pressed: stop making one
                 m_pwSetup = false;
@@ -3561,7 +3561,7 @@ void CardsActivity::pickChoice(int index) {
                 if ((*m_galleryAll)[i] == file) m_galleryAt = static_cast<int>(i);
         m_galleryView = true;
         loadGalleryPicture();
-        m_audio.play("activation");
+        m_audio.play("confirm");
         return;
     }
     if (m_pickWall) { // a background, or the lock screen's picture
@@ -3596,7 +3596,7 @@ void CardsActivity::pickChoice(int index) {
         return ok;
     });
     m_pickOpen = false;
-    m_audio.play("activation");
+    m_audio.play("confirm");
     if (!cover && !hero && !m_settings.titlePics) say("Saved. It shows when Settings > Pictures > Title pictures is on.");
 }
 
@@ -3820,7 +3820,7 @@ void CardsActivity::updateOptions() {
     if (in.isDown(B::A) && m_optSel >= 0 && m_optSel < n) {
         auto run = m_optItems[(size_t)m_optSel].run;
         m_optOpen = false;
-        m_audio.play("activation");
+        m_audio.play("confirm");
         if (run) run();
     }
 }
@@ -3939,7 +3939,7 @@ void CardsActivity::startMove() {
     m_moveBefore = games();
     m_moveBeforeSel = sel();
     m_zone = Zone::Cards;
-    m_audio.play("activation");
+    m_audio.play("confirm");
 }
 
 void CardsActivity::finishMove(bool keep) {
@@ -4087,7 +4087,7 @@ void CardsActivity::updateDots() {
     const int i = (m_dotsRow - 1) * kDotsCols + m_dotsCol;
     if (i >= 0 && i < tiles && m_dotsTiles[(size_t)i].run) {
         auto run = m_dotsTiles[(size_t)i].run;
-        m_audio.play("activation");
+        m_audio.play("confirm");
         run();
     }
 }
@@ -4110,7 +4110,7 @@ bool CardsActivity::dotsTouch() {
     for (size_t i = 0; i < m_dotsTiles.size(); ++i)
         if (dotsTile(p, static_cast<int>(i)).contains(x, y) && m_dotsTiles[i].run) {
             auto run = m_dotsTiles[i].run;
-            m_audio.play("activation");
+            m_audio.play("confirm");
             run();
             return true;
         }
@@ -4213,7 +4213,7 @@ void CardsActivity::updatePower() {
     if (in.isDown(B::A) && m_powerSel < n) {
         auto run = m_powerItems[(size_t)m_powerSel].run;
         m_powerOpen = false;
-        m_audio.play("activation");
+        m_audio.play("confirm");
         if (run) run();
     }
 }
@@ -4227,7 +4227,7 @@ bool CardsActivity::powerTouch() {
             m_powerSel = i;
             auto run = m_powerItems[(size_t)i].run;
             m_powerOpen = false;
-            m_audio.play("activation");
+            m_audio.play("confirm");
             if (run) run();
             return true;
         }
@@ -4309,7 +4309,7 @@ void CardsActivity::quickActivate(int row, int col) {
             return;
         }
         spotifyDo(kCmds[std::max(0, col)]);
-        m_audio.play("activation");
+        m_audio.play("confirm");
         return;
     }
     if (row == kQPlayer) {
@@ -4339,7 +4339,7 @@ void CardsActivity::quickActivate(int row, int col) {
                 break;
         }
         m_settings.save();
-        m_audio.play("activation");
+        m_audio.play("confirm");
     } else if (row == kQAirplane) {
         if (setAirplaneMode(!m_quick.airplane)) m_quick.airplane = !m_quick.airplane;
         else say("Airplane mode didn't change.");
@@ -4400,7 +4400,7 @@ void CardsActivity::updateQuick() {
             m_settings.music = true;
             m_settings.save();
             m_audio.playTrack(static_cast<size_t>(m_quickListSel));
-            m_audio.play("activation");
+            m_audio.play("confirm");
         }
         if (in.isDown(B::B) || left) {
             m_quickPlaylist = false;
@@ -4515,7 +4515,7 @@ void CardsActivity::musicControl(int col) {
         static constexpr Spotify::Cmd kCmds[5] = {Spotify::Cmd::Shuffle, Spotify::Cmd::Previous, Spotify::Cmd::PlayPause,
                                                   Spotify::Cmd::Next, Spotify::Cmd::Repeat};
         spotifyDo(kCmds[std::clamp(col, 0, 4)]);
-        m_audio.play("activation");
+        m_audio.play("confirm");
         return;
     }
     switch (col) {
@@ -4542,7 +4542,7 @@ void CardsActivity::musicControl(int col) {
             break;
     }
     m_settings.save();
-    m_audio.play("activation");
+    m_audio.play("confirm");
 }
 
 void CardsActivity::updateMusic() {
@@ -4580,7 +4580,7 @@ void CardsActivity::updateMusic() {
             m_settings.music = true;
             m_audio.playTrack(static_cast<size_t>(m_musicRow));
             m_settings.save();
-            m_audio.play("activation");
+            m_audio.play("confirm");
         }
     }
     if (left || right || up || down) m_audio.play("navigation");
@@ -4628,7 +4628,7 @@ bool CardsActivity::musicTouch() {
             m_settings.music = true;
             m_audio.playTrack(static_cast<size_t>(row));
             m_settings.save();
-            m_audio.play("activation");
+            m_audio.play("confirm");
         }
         return true;
     }
@@ -4755,7 +4755,7 @@ void CardsActivity::updateSpotifyQr() {
         m_settings.spotify = true; // signed in: the music player shows it
         m_audio.setMusic(homeMusic(), m_settings.musicVolume);
         m_settings.save();
-        m_audio.play("activation");
+        m_audio.play("confirm");
         say("Signed in: Spotify is in the music player now");
         return;
     }
@@ -5672,7 +5672,7 @@ void CardsActivity::saveAllPictures(bool quiet) {
         threadDone();
     });
     if (quiet) return;
-    m_audio.play("activation");
+    m_audio.play("confirm");
     say("Saving every game's pictures on the SD card...");
 }
 
@@ -5737,7 +5737,7 @@ void CardsActivity::startConnectionTest() {
         offScreenCore();
         testConnection(*t);
     });
-    m_audio.play("activation");
+    m_audio.play("confirm");
 }
 
 std::string CardsActivity::netTestText(int row) {
@@ -6573,7 +6573,7 @@ void CardsActivity::listInput(std::vector<MenuItem>& items, int& sel, const std:
         } else if (item.kind == MenuItem::Action && item.run) {
             auto run = item.run; // close() may take the list (and the row) away
             if (!item.stay) close();
-            else m_audio.play("activation");
+            else m_audio.play("confirm");
             run();
         }
     }
@@ -6646,7 +6646,7 @@ bool CardsActivity::updateSheet(float) {
     }
     if (in.isDown(B::A)) {
         if (item.kind == MenuItem::Action && item.run) {
-            m_audio.play("activation");
+            m_audio.play("confirm");
             auto run = item.run;
             run();
         } else if (item.change && item.kind != MenuItem::Info) {
@@ -6730,7 +6730,7 @@ bool CardsActivity::handleTouch() {
         m_sheetRow = r;
         const nxui::Rect row{kRowsX, kSheetTop + kRowH * static_cast<float>(r) - m_sheetScroll, kRowsW, kRowH - 8.f};
         if (tapRow(rows[(size_t)r], row, row.x + row.width - 18.f - 220.f, 220.f) && rows[(size_t)r].run) {
-            m_audio.play("activation");
+            m_audio.play("confirm");
             auto run = rows[(size_t)r].run;
             run();
         }

@@ -42,6 +42,8 @@ public:
     void onAccept(AcceptCallback cb) { m_acceptCb = std::move(cb); }
     void onCancel(VoidCallback cb) { m_cancelCb = std::move(cb); }
     void onKeySfx(VoidCallback cb) { m_keySfxCb = std::move(cb); }
+    // Optional. When unset, erasing falls back to the key sound.
+    void onBackspaceSfx(VoidCallback cb) { m_backspaceSfxCb = std::move(cb); }
     void onNavigateSfx(VoidCallback cb) { m_navigateSfxCb = std::move(cb); }
     void onCloseSfx(VoidCallback cb) { m_closeSfxCb = std::move(cb); }
     void onAccessibilityAnnouncement(StringCallback cb) { m_accessibilityCb = std::move(cb); }
@@ -136,6 +138,7 @@ private:
     AcceptCallback m_acceptCb;
     VoidCallback m_cancelCb;
     VoidCallback m_keySfxCb;
+    VoidCallback m_backspaceSfxCb;
     VoidCallback m_navigateSfxCb;
     VoidCallback m_closeSfxCb;
     StringCallback m_accessibilityCb;

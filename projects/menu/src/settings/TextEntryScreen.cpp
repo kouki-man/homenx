@@ -437,7 +437,8 @@ void TextEntryScreen::backspace() {
         --cut;
     m_text.erase(cut);
     m_caretTime = 0.f;
-    if (m_keySfxCb) m_keySfxCb();
+    if (m_backspaceSfxCb) m_backspaceSfxCb();
+    else if (m_keySfxCb) m_keySfxCb();
 }
 
 void TextEntryScreen::beginBackspaceHold() {

@@ -2082,8 +2082,9 @@ void CardsActivity::ensureTextEntry() {
         m_textEntry->setFont(&m_hxFont);
         m_textEntry->setSmallFont(&m_hxSmall);
         m_textEntry->setTheme(&m_theme);
-        m_textEntry->onKeySfx([this]() { m_audio.play("confirm"); });
-        m_textEntry->onNavigateSfx([this]() { m_audio.play("navigation"); });
+        m_textEntry->onKeySfx([this]() { m_audio.play("key"); });
+        m_textEntry->onBackspaceSfx([this]() { m_audio.play("key_backspace"); });
+        m_textEntry->onNavigateSfx([this]() { m_audio.play("key_move"); });
         m_textEntry->onCloseSfx([this]() { m_audio.play("hide_modal"); });
     } else {
         rootBox().removeChild(m_textEntry.get());
